@@ -7,9 +7,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 /**
- * @Author Wong Jwei
- * @Date 2021/7/21
- * @Description 客户端
+ * 客户端配置
+ *
+ * @author Wang Junwei
+ * @date 2021/7/21
+ * @see <a href="https://netty.io/wiki/user-guide-for-5.x.html">netty</a>
  */
 public class ClientRunner {
 

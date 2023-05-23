@@ -6,12 +6,15 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-/**
- * @Author Wong Jwei
- * @Date 2021/7/20
- * @Description 服务端
- */
+import java.util.HashMap;
 
+/**
+ * 服务端配置
+ *
+ * @author Wang Junwei
+ * @date 2021/7/20
+ * @see <a href="https://netty.io/wiki/user-guide-for-5.x.html">netty</a>
+ */
 public class ServerRunner {
 
     int port;
