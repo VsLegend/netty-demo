@@ -13,6 +13,7 @@ public class ServerProcessHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        System.out.println("接收到消息：" + msg);
         String message = "Reply: This is reply from server-.^";
         ctx.writeAndFlush(message + msg);
     }
