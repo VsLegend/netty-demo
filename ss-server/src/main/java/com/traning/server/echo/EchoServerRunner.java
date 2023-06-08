@@ -1,6 +1,5 @@
-package com.traning.server;
+package com.traning.server.echo;
 
-import com.traning.server.handler.ServerRequestInitHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -15,16 +14,16 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * @date 2021/7/20
  * @see <a href="https://netty.io/wiki/user-guide-for-5.x.html">netty</a>
  */
-public class ServerRunner {
+public class EchoServerRunner {
 
     int port;
 
-    public ServerRunner(int port) {
+    public EchoServerRunner(int port) {
         this.port = port;
     }
 
     public static void main(String[] args) throws Exception {
-        ServerRunner server = new ServerRunner(7777);
+        EchoServerRunner server = new EchoServerRunner(7777);
         server.run();
     }
 

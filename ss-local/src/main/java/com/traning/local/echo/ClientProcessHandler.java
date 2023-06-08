@@ -1,4 +1,4 @@
-package com.traning.local.handler;
+package com.traning.local.echo;
 
 import com.traning.domain.dto.RequestData;
 import io.netty.channel.ChannelFuture;

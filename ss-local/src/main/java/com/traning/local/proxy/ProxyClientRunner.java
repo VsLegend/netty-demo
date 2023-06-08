@@ -1,8 +1,10 @@
-package com.traning.local;
+package com.traning.local.proxy;
 
-import com.traning.local.handler.ClientRequestInitHandler;
+import com.traning.local.echo.ClientRequestInitHandler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
@@ -13,13 +15,13 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  * @date 2021/7/21
  * @see <a href="https://netty.io/wiki/user-guide-for-5.x.html">netty</a>
  */
-public class ClientRunner {
+public class ProxyClientRunner {
 
     String host;
 
     int port;
 
-    public ClientRunner(String host, int port) {
+    public ProxyClientRunner(String host, int port) {
         this.host = host;
         this.port = port;
     }
@@ -27,7 +29,7 @@ public class ClientRunner {
     public static void main(String[] args) throws Exception {
         String host = System.getProperty("host", "127.0.0.1");
         int port = Integer.parseInt(System.getProperty("port", "7777"));
-        ClientRunner client = new ClientRunner(host, port);
+        ProxyClientRunner client = new ProxyClientRunner(host, port);
         client.run();
     }
 

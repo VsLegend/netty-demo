@@ -1,4 +1,4 @@
-package com.traning.local.handler;
+package com.traning.local.echo;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -13,6 +13,6 @@ public class ClientRequestInitHandler extends ChannelInitializer<SocketChannel> 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         // 初始化该通道的出入处理器，指定相关的出入规则
-        ch.pipeline().addLast(new RequestMessageEncoder(), new ResponseMessageDecoder(), new ClientProcessHandler());
+        ch.pipeline().addLast(new ClientProcessHandler());
     }
 }
