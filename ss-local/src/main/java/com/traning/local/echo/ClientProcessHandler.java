@@ -16,15 +16,12 @@ public class ClientProcessHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 在这里模拟一次客户端发送数据
-        RequestData data = new RequestData();
-        data.setId(999);
-        data.setName("荷花");
-        ChannelFuture channelFuture = ctx.writeAndFlush(data);
+        String message = "Hello，你好吗？";
+        ChannelFuture channelFuture = ctx.writeAndFlush(message);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         System.out.println("读取一次消息中：" + msg);
-        ctx.close();
     }
 }
