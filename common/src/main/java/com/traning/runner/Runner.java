@@ -1,4 +1,4 @@
-package com.traning.domain;
+package com.traning.runner;
 
 import com.google.common.net.HostAndPort;
 import io.netty.channel.ChannelHandler;
@@ -32,7 +32,7 @@ public abstract class Runner {
     }
 
     /**
-     * 创建出入编码执行器
+     * 创建出入编码执行器，如果不能作为共享的解码编码处理器，那么不要设置为单例
      *
      * @return
      */
@@ -89,5 +89,9 @@ public abstract class Runner {
 
     public HostAndPort getHostAndPort() {
         return hostAndPort;
+    }
+
+    public EventLoopGroup getWorker() {
+        return worker;
     }
 }

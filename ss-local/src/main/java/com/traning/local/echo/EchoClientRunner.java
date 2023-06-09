@@ -1,8 +1,10 @@
 package com.traning.local.echo;
 
 import com.google.common.net.HostAndPort;
-import com.traning.domain.ClientRunner;
+import com.traning.runner.ClientRunner;
 import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 /**
  * 客户端配置
@@ -23,7 +25,8 @@ public class EchoClientRunner extends ClientRunner {
     @Override
     public ChannelHandler[] createChannelHandlers() {
         return new ChannelHandler[]{
-                new ClientProcessHandler()
+                new StringDecoder(),
+                new StringEncoder()
         };
     }
 }

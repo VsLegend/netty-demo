@@ -1,46 +1,42 @@
-package com.traning.domain;
+package com.traning.runner;
 
+import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 
 import javax.annotation.PreDestroy;
 
 /**
- * 服务端服务
+ * 客户端服务
  *
  * @author Wang Junwei
  * @date 2023/6/9 10:39
  * @see <a href="https://netty.io/wiki/user-guide-for-5.x.html">netty</a>
  */
-public abstract class ServerRunner extends Runner {
-
-    private final EventLoopGroup boss;
-
-    public ServerRunner() {
-        super();
-        boss = new NioEventLoopGroup();
-    }
+public abstract class ClientRunner extends Runner {
 
     @Override
     public void start() throws Exception {
         startCheck();
-        ServerBootstrap b = new ServerBootstrap();
+        Bootstrap b = new Bootstrap();
         channelHandlers = createChannelHandlers();
-        b.group(boss, worker)
+        b.group(worker)
                 // 新的Channel 如何接收进来的连接
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<Channel>() {
+                .channel(NioSocketChannel.class)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .handler(new ChannelInitializer<Channel>() {
                     @Override
                     protected void initChannel(Channel ch) {
-                        ch.pipeline().addLast(channelHandlers);
+                        ch.pipeline().addLast(createChannelHandlers());
                     }
-                })
-                .option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
+                });
         // 绑定监听服务端口，并开始接收进来的连接
-        ChannelFuture channelFuture = b.bind(port).sync();
+        ChannelFuture channelFuture = b.connect(host, port).sync();
         if (!channelFuture.isSuccess()) {
             channelFuture.cause().printStackTrace();
         }
@@ -49,7 +45,7 @@ public abstract class ServerRunner extends Runner {
     @Override
     @PreDestroy
     public void stop() throws Exception {
-        boss.shutdownGracefully();
         worker.shutdownGracefully();
     }
+
 }

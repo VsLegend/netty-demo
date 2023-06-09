@@ -1,7 +1,7 @@
 package com.traning.server.echo;
 
 import com.google.common.net.HostAndPort;
-import com.traning.domain.ServerRunner;
+import com.traning.runner.ServerRunner;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
