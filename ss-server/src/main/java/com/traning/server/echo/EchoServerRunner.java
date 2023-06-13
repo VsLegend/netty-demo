@@ -2,6 +2,7 @@ package com.traning.server.echo;
 
 import com.google.common.net.HostAndPort;
 import com.traning.runner.ServerRunner;
+import com.traning.server.handler.ServerStringHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
@@ -27,8 +28,7 @@ public class EchoServerRunner extends ServerRunner {
     @Override
     public ChannelHandler[] createChannelHandlers() {
         return new ChannelHandler[]{
-                new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()),
-                new StringDecoder(), new StringEncoder(), new ServerProcessHandler()
+                new StringDecoder(), new StringEncoder(), new ServerStringHandler()
         };
     }
 }

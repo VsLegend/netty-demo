@@ -1,7 +1,9 @@
 package com.traning.local.echo;
 
 import com.google.common.net.HostAndPort;
+import com.traning.local.handler.ClientStringHandler;
 import com.traning.runner.ClientRunner;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
@@ -20,12 +22,15 @@ public class EchoClientRunner extends ClientRunner {
         EchoClientRunner client = new EchoClientRunner();
         client.setHostAndPort(hostAndPort);
         client.start();
+        ChannelFuture channelFuture = client.getChannelFuture();
+        channelFuture.channel().writeAndFlush("Hello!");
     }
 
     @Override
     public ChannelHandler[] createChannelHandlers() {
         return new ChannelHandler[]{
                 new StringDecoder(),
+                new ClientStringHandler(),
                 new StringEncoder()
         };
     }

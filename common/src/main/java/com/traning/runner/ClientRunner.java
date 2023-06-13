@@ -1,12 +1,10 @@
 package com.traning.runner;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import javax.annotation.PreDestroy;
@@ -19,6 +17,8 @@ import javax.annotation.PreDestroy;
  * @see <a href="https://netty.io/wiki/user-guide-for-5.x.html">netty</a>
  */
 public abstract class ClientRunner extends Runner {
+
+    private ChannelFuture channelFuture;
 
     @Override
     public void start() throws Exception {
@@ -36,7 +36,7 @@ public abstract class ClientRunner extends Runner {
                     }
                 });
         // 绑定监听服务端口，并开始接收进来的连接
-        ChannelFuture channelFuture = b.connect(host, port).sync();
+        channelFuture = b.connect(host, port).sync();
         if (!channelFuture.isSuccess()) {
             channelFuture.cause().printStackTrace();
         }
@@ -48,4 +48,7 @@ public abstract class ClientRunner extends Runner {
         worker.shutdownGracefully();
     }
 
+    public ChannelFuture getChannelFuture() {
+        return channelFuture;
+    }
 }

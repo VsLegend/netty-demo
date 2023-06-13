@@ -1,4 +1,4 @@
-package com.traning.server.echo;
+package com.traning.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -9,11 +9,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * @author Wang Junwei
  * @date 2023/5/22 16:48
  */
-public class ServerProcessHandler extends SimpleChannelInboundHandler<String> {
+public class ServerStringHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-        System.out.println("接收到消息：" + msg);
+        System.out.println("服务端接收到消息：" + msg);
         String message = "Reply: This is reply from server-.^";
         ctx.writeAndFlush(message + msg);
     }
