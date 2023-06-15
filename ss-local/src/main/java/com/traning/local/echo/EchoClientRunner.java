@@ -3,6 +3,7 @@ package com.traning.local.echo;
 import com.google.common.net.HostAndPort;
 import com.traning.local.handler.ClientStringHandler;
 import com.traning.runner.ClientRunner;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.string.StringDecoder;
@@ -27,7 +28,7 @@ public class EchoClientRunner extends ClientRunner {
     }
 
     @Override
-    public ChannelHandler[] createChannelHandlers() {
+    public ChannelHandler[] createChannel(Channel channel) {
         return new ChannelHandler[]{
                 new StringDecoder(),
                 new ClientStringHandler(),

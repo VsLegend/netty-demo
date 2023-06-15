@@ -34,7 +34,7 @@ public abstract class ServerRunner extends Runner {
                     @Override
                     protected void initChannel(Channel ch) {
                         // 部分handler不是共享的
-                        ch.pipeline().addLast(createChannelHandlers());
+                        ch.pipeline().addLast(createChannel(ch));
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)

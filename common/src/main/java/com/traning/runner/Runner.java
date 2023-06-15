@@ -1,6 +1,7 @@
 package com.traning.runner;
 
 import com.google.common.net.HostAndPort;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -30,9 +31,10 @@ public abstract class Runner {
     /**
      * 创建出入编码执行器，如果不能作为共享的解码编码处理器，那么不要设置为单例
      *
+     * @param channel
      * @return
      */
-    public abstract ChannelHandler[] createChannelHandlers();
+    public abstract ChannelHandler[] createChannel(Channel channel);
 
     /**
      * 启动服务

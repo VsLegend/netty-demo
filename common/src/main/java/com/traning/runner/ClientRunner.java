@@ -34,7 +34,7 @@ public abstract class ClientRunner extends Runner {
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
                     protected void initChannel(Channel ch) {
-                        ch.pipeline().addLast(createChannelHandlers());
+                        ch.pipeline().addLast(createChannel(ch));
                     }
                 });
         // 绑定监听服务端口，并开始接收进来的连接

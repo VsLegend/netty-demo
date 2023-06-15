@@ -2,6 +2,7 @@ package com.traning.local.proxy;
 
 import com.google.common.net.HostAndPort;
 import com.traning.runner.ClientRunner;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 
@@ -37,18 +38,18 @@ public class ProxyClientRunner extends ClientRunner {
         channelFuture.channel().writeAndFlush("");
     }
 
-    @Override
-    public ChannelHandler[] createChannelHandlers() {
-        return new ChannelHandler[] {
-
-        };
-    }
-
     public HostAndPort getTargetProxy() {
         return targetProxy;
     }
 
     public void setTargetProxy(HostAndPort targetProxy) {
         this.targetProxy = targetProxy;
+    }
+
+    @Override
+    public ChannelHandler[] createChannel(Channel channel) {
+        return new ChannelHandler[] {
+
+        };
     }
 }
