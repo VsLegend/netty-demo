@@ -1,4 +1,4 @@
-package com.traning.local.handler;
+package com.traning.local.echo;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

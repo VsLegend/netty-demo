@@ -42,6 +42,7 @@ public abstract class ClientRunner extends Runner {
         if (!channelFuture.isSuccess()) {
             channelFuture.cause().printStackTrace();
         }
+        channelFuture.channel().closeFuture().sync();
     }
 
     @Override

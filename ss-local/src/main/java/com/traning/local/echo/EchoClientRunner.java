@@ -1,7 +1,6 @@
 package com.traning.local.echo;
 
 import com.google.common.net.HostAndPort;
-import com.traning.local.handler.ClientStringHandler;
 import com.traning.runner.ClientRunner;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

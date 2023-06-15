@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import javax.annotation.PreDestroy;
+import java.util.Objects;
 
 /**
  * 服务端服务
@@ -25,7 +26,7 @@ public abstract class ServerRunner extends Runner {
 
     @Override
     public void start() throws Exception {
-        startCheck();
+        portCheck();
         ServerBootstrap b = new ServerBootstrap();
         b.group(boss, worker)
                 // 新的Channel 如何接收进来的连接
@@ -44,6 +45,11 @@ public abstract class ServerRunner extends Runner {
         if (!channelFuture.isSuccess()) {
             channelFuture.cause().printStackTrace();
         }
+        channelFuture.channel().closeFuture().sync();
+    }
+
+    private void portCheck() {
+        Objects.requireNonNull(port);
     }
 
     @Override
