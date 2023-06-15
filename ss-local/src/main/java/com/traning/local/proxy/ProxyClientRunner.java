@@ -1,7 +1,6 @@
 package com.traning.local.proxy;
 
 import com.google.common.net.HostAndPort;
-import com.traning.local.echo.EchoClientRunner;
 import com.traning.runner.ClientRunner;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
