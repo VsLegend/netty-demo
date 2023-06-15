@@ -20,11 +20,7 @@ public abstract class Runner {
 
     protected Integer port;
 
-    protected HostAndPort hostAndPort;
-
     protected final EventLoopGroup worker;
-
-    protected ChannelHandler[] channelHandlers;
 
 
     public Runner() {
@@ -56,7 +52,6 @@ public abstract class Runner {
      * 运行前校验
      */
     public void startCheck() {
-        Objects.requireNonNull(hostAndPort);
         Objects.requireNonNull(host);
         Objects.requireNonNull(port);
     }
@@ -77,18 +72,9 @@ public abstract class Runner {
         this.port = port;
     }
 
-    public ChannelHandler[] getChannelHandlers() {
-        return channelHandlers;
-    }
-
     public void setHostAndPort(@Nonnull HostAndPort hostAndPort) {
-        this.hostAndPort = hostAndPort;
         host = hostAndPort.getHost();
         port = hostAndPort.getPort();
-    }
-
-    public HostAndPort getHostAndPort() {
-        return hostAndPort;
     }
 
     public EventLoopGroup getWorker() {

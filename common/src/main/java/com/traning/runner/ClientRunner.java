@@ -18,13 +18,15 @@ import javax.annotation.PreDestroy;
  */
 public abstract class ClientRunner extends Runner {
 
+    /**
+     * 用于主动发送数据
+     */
     private ChannelFuture channelFuture;
 
     @Override
     public void start() throws Exception {
         startCheck();
         Bootstrap b = new Bootstrap();
-        channelHandlers = createChannelHandlers();
         b.group(worker)
                 // 新的Channel 如何接收进来的连接
                 .channel(NioSocketChannel.class)

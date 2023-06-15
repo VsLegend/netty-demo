@@ -27,7 +27,6 @@ public abstract class ServerRunner extends Runner {
     public void start() throws Exception {
         startCheck();
         ServerBootstrap b = new ServerBootstrap();
-        channelHandlers = createChannelHandlers();
         b.group(boss, worker)
                 // 新的Channel 如何接收进来的连接
                 .channel(NioServerSocketChannel.class)
