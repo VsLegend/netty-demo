@@ -1,6 +1,5 @@
 package com.traning.server.http;
 
-import com.google.common.net.HostAndPort;
 import com.traning.runner.ServerRunner;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -26,9 +25,13 @@ public class HttpServerRunner extends ServerRunner {
     @Override
     public ChannelHandler[] createChannel(Channel channel) {
         return new ChannelHandler[] {
+                // 集HttpRequest、HttpResponse为一的解码编码器
                 new HttpServerCodec(),
+                // 根据请求头的Accept-Encoding，对HttpMessage、HttpContent进行压缩
                 new HttpContentCompressor((CompressionOptions[]) null),
-                new HttpServerExpectContinueHandler()
+                //
+                new HttpServerExpectContinueHandler(),
+                new HttpMessageHandler()
         };
     }
 }
