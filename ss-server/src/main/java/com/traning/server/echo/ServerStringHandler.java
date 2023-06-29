@@ -10,6 +10,8 @@ import java.util.Date;
  *
  * @author Wang Junwei
  * @date 2023/5/22 16:48
+ *
+ * Closed
  */
 public class ServerStringHandler extends SimpleChannelInboundHandler<String> {
 
@@ -17,15 +19,14 @@ public class ServerStringHandler extends SimpleChannelInboundHandler<String> {
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
         System.out.println("服务端接收到消息：" + msg);
         String message = "HTTP/1.1 200 OK\n" +
-                "Date: " + new Date() + "\n" +
-                "Content-Type: text/plain\n" +
-                // Closed
-                "Connection: keep-alive\n" +
                 "Content-Length: 35\n" +
+                "Date: " + new Date() + "\n" +
+                "Connection: keep-alive\n" +
+                "Content-Type: text/plain\n" +
                 "\n" +
                 "Reply, This is reply from server-.^";
         System.out.println(message);
-        ctx.writeAndFlush(message + msg);
+        ctx.writeAndFlush(message);
     }
 
 }
