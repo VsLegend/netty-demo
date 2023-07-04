@@ -19,12 +19,11 @@ import io.netty.handler.logging.LoggingHandler;
  */
 public class EchoServerRunner {
 
-    private int port;
+    private final int port;
 
     public EchoServerRunner(Integer port) {
         this.port = port;
     }
-
 
     public static void main(String[] args) throws Exception {
         EchoServerRunner server = new EchoServerRunner(8001);
@@ -37,15 +36,16 @@ public class EchoServerRunner {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-                    // 新的Channel 如何接收进来的连接
+                    // 新的Channel 如何进行数据传输
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 100)
+                    // 打印bossGroup处理日志
                     .handler(new LoggingHandler(LogLevel.DEBUG))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             // 设置出入消息的处理链
-                            ch.pipeline().addLast(createChannel(ch));
+                            ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG), new StringDecoder(), new StringEncoder(), new ServerStringHandler());
                         }
                     });
             // 绑定监听服务端口，并开始接收进来的连接
@@ -55,11 +55,5 @@ public class EchoServerRunner {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-    }
-
-    public ChannelHandler[] createChannel(Channel channel) {
-        return new ChannelHandler[]{
-                new StringDecoder(), new StringEncoder(), new ServerStringHandler()
-        };
     }
 }

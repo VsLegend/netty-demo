@@ -7,6 +7,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 /**
  * 客户端配置
@@ -42,7 +44,7 @@ public class EchoClientRunner {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             // 设置出入消息的处理链
-                            ch.pipeline().addLast(createChannel(ch));
+                            ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG), new StringDecoder(), new StringEncoder(), new ClientStringHandler());
                         }
                     });
             // 创建一个连接
@@ -53,13 +55,5 @@ public class EchoClientRunner {
         } finally {
             workerGroup.shutdownGracefully();
         }
-    }
-
-    public ChannelHandler[] createChannel(Channel channel) {
-        return new ChannelHandler[]{
-                new StringDecoder(),
-                new ClientStringHandler(),
-                new StringEncoder()
-        };
     }
 }

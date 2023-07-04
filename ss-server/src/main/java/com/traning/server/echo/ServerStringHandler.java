@@ -18,15 +18,16 @@ public class ServerStringHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
         System.out.println("服务端接收到消息：" + msg);
-        String message = "HTTP/1.1 200 OK\n" +
-                "Content-Length: 35\n" +
-                "Date: " + new Date() + "\n" +
-                "Connection: keep-alive\n" +
-                "Content-Type: text/plain\n" +
-                "\n" +
-                "Reply, This is reply from server-.^";
-        System.out.println(message);
-        ctx.writeAndFlush(message);
+//        String message = "HTTP/1.1 200 OK\n" +
+//                "Content-Length: 35\n" +
+//                "Date: " + new Date() + "\n" +
+//                "Connection: keep-alive\n" +
+//                "Content-Type: text/plain\n" +
+//                "\n" +
+//                "Reply, This is reply from server-.^";
+//        ctx.write(msg);
+//        ctx.flush();
+        ctx.writeAndFlush(msg);
     }
 
 }
