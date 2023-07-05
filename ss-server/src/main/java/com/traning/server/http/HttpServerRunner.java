@@ -1,7 +1,10 @@
 package com.traning.server.http;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -43,7 +46,16 @@ public class HttpServerRunner {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(createChannel(ch));
+                            ch.pipeline().addLast(
+                                    new LoggingHandler(LogLevel.DEBUG),
+                                    // 集HttpRequestDecoder、HttpResponseEncoder为一体的解码编码器
+                                    new HttpServerCodec(),
+                                    // 根据请求头的Accept-Encoding的压缩算法，对HttpMessage、HttpContent进行压缩
+                                    new HttpContentCompressor((CompressionOptions[]) null),
+                                    //
+                                    new HttpServerExpectContinueHandler(),
+                                    new ServerHttpMessageHandler()
+                            );
                         }
                     });
             // 绑定监听服务端口，并开始接收进来的连接
@@ -53,17 +65,5 @@ public class HttpServerRunner {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-    }
-
-    public ChannelHandler[] createChannel(Channel channel) {
-        return new ChannelHandler[]{
-                // 集HttpRequestDecoder、HttpResponseEncoder为一体的解码编码器
-                new HttpServerCodec(),
-                // 根据请求头的Accept-Encoding，对HttpMessage、HttpContent进行压缩
-                new HttpContentCompressor((CompressionOptions[]) null),
-                //
-                new HttpServerExpectContinueHandler(),
-                new HttpMessageHandler()
-        };
     }
 }

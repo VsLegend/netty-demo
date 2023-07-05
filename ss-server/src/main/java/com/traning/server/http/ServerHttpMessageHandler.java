@@ -11,7 +11,7 @@ import io.netty.handler.codec.http.*;
  * @author Wang Junwei
  * @date 2023/6/15 10:49
  */
-public class HttpMessageHandler extends SimpleChannelInboundHandler<HttpObject> {
+public class ServerHttpMessageHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final byte[] CONTENT = {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd'};
 
