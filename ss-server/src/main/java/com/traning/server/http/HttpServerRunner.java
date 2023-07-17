@@ -50,10 +50,9 @@ public class HttpServerRunner {
                                     new LoggingHandler(LogLevel.DEBUG),
                                     // 集HttpRequestDecoder、HttpResponseEncoder为一体的解码编码器
                                     new HttpServerCodec(),
-                                    // 根据请求头的Accept-Encoding的压缩算法，对HttpMessage、HttpContent进行压缩
-                                    new HttpContentCompressor((CompressionOptions[]) null),
-                                    //
-                                    new HttpServerExpectContinueHandler(),
+//                                    // 根据请求头的Accept-Encoding的压缩算法，对HttpMessage、HttpContent进行压缩
+//                                    new HttpContentCompressor((CompressionOptions[]) null),
+//                                    new HttpServerExpectContinueHandler(),
                                     new ServerHttpMessageHandler()
                             );
                         }
