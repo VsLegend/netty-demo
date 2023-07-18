@@ -1,6 +1,5 @@
 package com.traning.local.http;
 
-import com.traning.local.echo.ClientStringHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -38,17 +37,12 @@ public class HttpClientRunner {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
-            b.group(workerGroup)
-                    .channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG),
-                                    new HttpClientCodec(),
-                                    new ClientStringHandler());
-                        }
-                    });
+            b.group(workerGroup).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new ChannelInitializer<SocketChannel>() {
+                @Override
+                public void initChannel(SocketChannel ch) {
+                    ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG), new HttpClientCodec(), new ClientMessageToHttpHandler(), new ClientHttpReadHandler());
+                }
+            });
             // 创建一个连接
             ChannelFuture f = b.connect(host, port).sync();
             // 创建连接后手动发送一个请求

@@ -8,10 +8,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.compression.CompressionOptions;
-import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
@@ -45,10 +42,9 @@ public class HttpServerRunner {
                     .handler(new LoggingHandler(LogLevel.DEBUG))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
+                        public void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast(
                                     new LoggingHandler(LogLevel.DEBUG),
-                                    // 集HttpRequestDecoder、HttpResponseEncoder为一体的解码编码器
                                     new HttpServerCodec(),
 //                                    // 根据请求头的Accept-Encoding的压缩算法，对HttpMessage、HttpContent进行压缩
 //                                    new HttpContentCompressor((CompressionOptions[]) null),

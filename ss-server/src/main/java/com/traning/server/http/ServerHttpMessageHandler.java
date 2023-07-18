@@ -16,16 +16,14 @@ public class ServerHttpMessageHandler extends SimpleChannelInboundHandler<HttpOb
     private static final byte[] CONTENT = {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd'};
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
         if (msg instanceof HttpRequest) {
             HttpRequest request = (HttpRequest) msg;
             boolean keepAlive = HttpUtil.isKeepAlive(request);
             // 返回http信息
             FullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(), HttpResponseStatus.OK, Unpooled.wrappedBuffer(CONTENT));
             // 设置请求头
-            response.headers()
-                    .set(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN)
-                    .setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN).setInt(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
 
             // 是否长连接
             if (keepAlive) {
@@ -50,4 +48,5 @@ public class ServerHttpMessageHandler extends SimpleChannelInboundHandler<HttpOb
         cause.printStackTrace();
         ctx.close();
     }
+
 }
