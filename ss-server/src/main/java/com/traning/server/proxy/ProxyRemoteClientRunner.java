@@ -2,10 +2,7 @@ package com.traning.server.proxy;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
@@ -17,54 +14,38 @@ import io.netty.handler.logging.LoggingHandler;
  */
 public class ProxyRemoteClientRunner {
 
-    private String host;
-    private Integer port;
+    private final String host;
+    private final Integer port;
+    private final ChannelHandlerContext ctx;
 
-    public ProxyRemoteClientRunner(String host, Integer port) {
+    public ProxyRemoteClientRunner(String host, Integer port, ChannelHandlerContext ctx) {
         this.host = host;
         this.port = port;
+        this.ctx = ctx;
     }
 
-    public static void main(String[] args) throws Exception {
-        // http：80    https：443
-        ProxyRemoteClientRunner runner = new ProxyRemoteClientRunner("www.baidu.com", 80);
-        runner.start();
-    }
-
-
-    public void start() throws Exception {
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {
-            Bootstrap b = new Bootstrap();
-            b.group(workerGroup)
-                    // 新的Channel 如何接收进来的连接
-                    .channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
-                            // 设置出入消息的处理链
-                            ch.pipeline().addLast(createChannel(ch));
-                        }
-                    });
-            // 创建一个连接
-            ChannelFuture f = b.connect(host, port).sync();
-            //
-            f.channel().closeFuture().sync();
-        } finally {
-            workerGroup.shutdownGracefully();
-        }
-    }
-
-    public ChannelHandler[] createChannel(Channel channel) {
-        return new ChannelHandler[]{
-                new LoggingHandler(LogLevel.DEBUG),
-                new SimpleChannelInboundHandler<String>() {
-                    @Override
-                    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-                        System.out.println("接收远程服务器的消息：" + msg);
-                    }
-                }
-        };
+    public Channel connect() throws Exception {
+        final Channel inbound = ctx.channel();
+        Bootstrap b = new Bootstrap();
+        // 与代理任务使用同一个eventLoop（处于同一线程），确保客户端和远程服务器的传输没有线程安全问题
+        b.group(inbound.eventLoop()).channel(inbound.getClass()).option(ChannelOption.TCP_NODELAY, true).handler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            public void initChannel(SocketChannel ch) throws Exception {
+                // 这里添加一个处理器，用于接收远程服务并将消息发送给客户端
+                ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG), new ProxyRemoteHandler(inbound));
+            }
+        });
+        ChannelFuture f = b.connect(host, port);
+        // 添加监听器，处理与远程服务器的连接状态事件
+        f.addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                // 与远程服务连接成功后，即可开始传输数据，这个时候代理服务器只有一个转发功能
+                inbound.read();
+            } else {
+                // 关闭与客户端的连接
+                inbound.close();
+            }
+        });
+        return f.channel();
     }
 }

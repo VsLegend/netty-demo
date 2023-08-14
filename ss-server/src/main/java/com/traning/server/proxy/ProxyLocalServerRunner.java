@@ -5,6 +5,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
@@ -14,19 +15,28 @@ import io.netty.handler.logging.LoggingHandler;
  * @author Wang Junwei
  * @date 2023/6/15 10:12
  */
-public class ProxyServerRunner {
+public class ProxyLocalServerRunner {
 
-    private int port;
+    private final int port;
 
-    private String proxyHost = "https://www.baidu.com/";
+    private String remoteHost = "www.baidu.com";
 
-    public ProxyServerRunner(Integer port) {
+    /**
+     * http
+     */
+    public static final Integer REMOTE_PORT = 80;
+    /**
+     * https
+     */
+    public static final Integer REMOTE_HTTPS_PORT = 443;
+
+    public ProxyLocalServerRunner(Integer port) {
         this.port = port;
     }
 
     public static void main(String[] args) throws Exception {
-        ProxyServerRunner proxyServerRunner = new ProxyServerRunner(8002);
-        proxyServerRunner.start();
+        ProxyLocalServerRunner proxyLocalServerRunner = new ProxyLocalServerRunner(8002);
+        proxyLocalServerRunner.start();
     }
 
     public void start() throws Exception {
@@ -34,16 +44,18 @@ public class ProxyServerRunner {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
-                    // 新的Channel 如何接收进来的连接
+            b.group(workerGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 100)
                     .handler(new LoggingHandler(LogLevel.DEBUG))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
-                            // 设置出入消息的处理链
-                            ch.pipeline().addLast(createChannel(ch));
+                        public void initChannel(SocketChannel ch) {
+                            ch.pipeline().addLast(
+                                    new LoggingHandler(LogLevel.DEBUG),
+                                    new HttpServerCodec(),
+                                    new ProxyLocalHandler(remoteHost, REMOTE_PORT)
+                            );
                         }
                     });
             // 绑定监听服务端口，并开始接收进来的连接
@@ -53,16 +65,5 @@ public class ProxyServerRunner {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-    }
-
-    public ChannelHandler[] createChannel(Channel channel) {
-        return new ChannelHandler[]{
-                new SimpleChannelInboundHandler<String>() {
-                    @Override
-                    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-                        System.out.println("接收远程服务器的消息：" + msg);
-                    }
-                }
-        };
     }
 }

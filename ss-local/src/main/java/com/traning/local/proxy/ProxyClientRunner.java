@@ -21,7 +21,7 @@ public class ProxyClientRunner extends ClientRunner {
 
     public static void main(String[] args) throws Exception {
         // 代理服务器地址
-        HostAndPort hostAndPort = HostAndPort.fromString("127.0.0.1:7022");
+        HostAndPort hostAndPort = HostAndPort.fromString("127.0.0.1:8002");
         ProxyClientRunner proxyClient = new ProxyClientRunner();
         proxyClient.setHostAndPort(hostAndPort);
         proxyClient.start();
