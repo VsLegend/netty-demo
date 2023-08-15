@@ -10,15 +10,18 @@ import io.netty.handler.codec.http.*;
  * @author Wang Junwei
  * @date 2023/6/15 10:49
  */
-public class ProxyRemoteHandler extends SimpleChannelInboundHandler<HttpObject> {
+public class ProxyRemoteInboundHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     /**
      * 保存与客户端的入站处理器
      */
-    private Channel inbound;
+    private final Channel inbound;
 
-    public ProxyRemoteHandler(Channel inbound) {
+    private HttpObject[] httpObjects;
+
+    public ProxyRemoteInboundHandler(Channel inbound) {
         this.inbound = inbound;
+        this.httpObjects = new HttpObject[1];
     }
 
     @Override
@@ -38,7 +41,12 @@ public class ProxyRemoteHandler extends SimpleChannelInboundHandler<HttpObject> 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
         // 读取远程服务器的内容将其转发给客户端，这个转发可以是原封不动的
-        ChannelUtils.msgForward(ctx, inbound, msg);
+        ChannelUtils.msgForwardThenRead(ctx, inbound, msg);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        inbound.close();
     }
 
     @Override

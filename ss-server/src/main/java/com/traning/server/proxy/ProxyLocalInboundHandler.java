@@ -3,12 +3,14 @@ package com.traning.server.proxy;
 import com.traning.utils.ChannelUtils;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Wang Junwei
  * @date 2023/8/14 15:17
  */
-public class ProxyLocalHandler extends SimpleChannelInboundHandler<HttpObject> {
+@Slf4j
+public class ProxyLocalInboundHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private final String remoteHost;
     private final Integer remotePort;
@@ -18,7 +20,7 @@ public class ProxyLocalHandler extends SimpleChannelInboundHandler<HttpObject> {
      */
     private Channel outbound;
 
-    public ProxyLocalHandler(String remoteHost, Integer remotePort) {
+    public ProxyLocalInboundHandler(String remoteHost, Integer remotePort) {
         this.remoteHost = remoteHost;
         this.remotePort = remotePort;
     }
@@ -41,15 +43,19 @@ public class ProxyLocalHandler extends SimpleChannelInboundHandler<HttpObject> {
         if (outbound.isActive()) {
             // 代理访问
             if (msg instanceof HttpRequest) {
-                // 消息头这里可以适当的隐藏原请求的内容，比如请求头的User-Agent等内容，也可以修改X-Forwarded-For来隐藏真实IP地址
+                // 消息头这里可以适当的隐藏原请求的内容，比如请求头的User-Agent等内容，也可以修改X-Forwarded-For来修改代理信息隐藏真实IP地址
                 HttpRequest httpRequest = (HttpRequest) msg;
                 DefaultHttpRequest proxyRequest = new DefaultHttpRequest(httpRequest.protocolVersion(), httpRequest.method(), httpRequest.uri());
                 proxyRequest.headers().setAll(httpRequest.headers());
+                // 修改请求主机到目标主机
+                proxyRequest.headers().set("Host", remoteHost);
                 // 消息转发
-                ChannelUtils.msgForward(ctx, outbound, proxyRequest);
+                ChannelUtils.msgForwardThenRead(ctx, outbound, proxyRequest);
+            } else if (msg instanceof LastHttpContent) {
+                // do nothing
             } else if (msg instanceof HttpContent) {
                 // 消息体就原封不动的转发就行
-                ChannelUtils.msgForward(ctx, outbound, msg);
+                ChannelUtils.msgForwardThenRead(ctx, outbound, msg);
             }
             // 忽略其他消息
         }
