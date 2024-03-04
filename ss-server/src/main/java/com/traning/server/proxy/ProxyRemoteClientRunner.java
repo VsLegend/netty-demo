@@ -55,8 +55,9 @@ public class ProxyRemoteClientRunner {
         f.addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
                 log.debug("连接远程服务器成功，开始传输数据");
-                // 与远程服务连接成功后，netty开始传输数据，这个时候代理服务器只有一个转发功能
-                inbound.read();
+                // 与远程服务连接成功后，开始向客户端传输数据，这个时候代理服务器只有一个转发功能
+                // 连接建立，自动读取数据
+                inbound.config().setAutoRead(true);
             } else {
                 log.debug("连接远程服务器失败，退出");
                 // 关闭与客户端的连接

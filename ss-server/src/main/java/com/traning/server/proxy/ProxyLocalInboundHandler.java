@@ -50,15 +50,20 @@ public class ProxyLocalInboundHandler extends SimpleChannelInboundHandler<HttpOb
                 // 修改请求主机到目标主机
                 proxyRequest.headers().set("Host", remoteHost);
                 // 消息转发
-                ChannelUtils.msgForwardThenRead(ctx, outbound, proxyRequest);
+                outbound.write(msg);
             } else if (msg instanceof LastHttpContent) {
-                // do nothing
+                outbound.write(msg);
             } else if (msg instanceof HttpContent) {
                 // 消息体就原封不动的转发就行
-                ChannelUtils.msgForwardThenRead(ctx, outbound, msg);
+                outbound.write(msg);
             }
             // 忽略其他消息
         }
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        outbound.flush();
     }
 
     @Override

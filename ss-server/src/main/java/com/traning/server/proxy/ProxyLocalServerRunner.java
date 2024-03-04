@@ -51,6 +51,7 @@ public class ProxyLocalServerRunner {
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 1024)
                     .handler(new LoggingHandler(LogLevel.DEBUG))
+                    // AUTO_READ：是否自动进行channel.read()操作
                     .childOption(ChannelOption.AUTO_READ, false)
                     .childOption(ChannelOption.TCP_NODELAY, true)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
